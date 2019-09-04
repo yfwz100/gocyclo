@@ -201,25 +201,44 @@ func recvString(recv ast.Expr) string {
 
 // complexity calculates the cyclomatic complexity of a function.
 func complexity(fn *ast.FuncDecl) int {
-	v := complexityVisitor{}
+	v := complexityVisitor{Complexity: new(counter), base: -1}
 	ast.Walk(&v, fn)
-	return v.Complexity
+	return v.Complexity.Value()
+}
+
+type counter struct {
+	count int
+}
+
+func (c *counter) Increase(v int) {
+	c.count += v
+}
+
+func (c *counter) Value() int {
+	return c.count
 }
 
 type complexityVisitor struct {
 	// Complexity is the cyclomatic complexity
-	Complexity int
+	Complexity *counter
+	base       int
 }
 
 // Visit implements the ast.Visitor interface.
 func (v *complexityVisitor) Visit(n ast.Node) ast.Visitor {
+	var nested int
 	switch n := n.(type) {
 	case *ast.FuncDecl, *ast.IfStmt, *ast.ForStmt, *ast.RangeStmt, *ast.CaseClause, *ast.CommClause:
-		v.Complexity++
+		v.Complexity.Increase(v.base + 1)
+		nested++
+	case *ast.FuncType:
+		nested++
 	case *ast.BinaryExpr:
 		if n.Op == token.LAND || n.Op == token.LOR {
-			v.Complexity++
+			v.Complexity.Increase(v.base + 1)
 		}
 	}
-	return v
+	// fmt.Printf("%v %d\n", n, v.base)
+	return &complexityVisitor{Complexity: v.Complexity, base: v.base + nested}
 }
+
