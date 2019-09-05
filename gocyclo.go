@@ -220,25 +220,32 @@ func (c *counter) Value() int {
 
 type complexityVisitor struct {
 	// Complexity is the cyclomatic complexity
-	Complexity *counter
-	base       int
+	Complexity     *counter
+	insideDecision bool
+	base           int
 }
 
 // Visit implements the ast.Visitor interface.
 func (v *complexityVisitor) Visit(n ast.Node) ast.Visitor {
+	var insideDecision bool
 	var nested int
 	switch n := n.(type) {
-	case *ast.FuncDecl, *ast.IfStmt, *ast.ForStmt, *ast.RangeStmt, *ast.CaseClause, *ast.CommClause:
+	case *ast.IfStmt, *ast.ForStmt:
+		insideDecision = true
+		v.Complexity.Increase(v.base + 1)
+		nested++
+	case *ast.FuncDecl, *ast.RangeStmt, *ast.CaseClause, *ast.CommClause:
 		v.Complexity.Increase(v.base + 1)
 		nested++
 	case *ast.FuncType:
 		nested++
 	case *ast.BinaryExpr:
-		if n.Op == token.LAND || n.Op == token.LOR {
+		if v.insideDecision && (n.Op == token.LAND || n.Op == token.LOR) {
 			v.Complexity.Increase(v.base + 1)
 		}
 	}
 	// fmt.Printf("%v %d\n", n, v.base)
-	return &complexityVisitor{Complexity: v.Complexity, base: v.base + nested}
+	return &complexityVisitor{Complexity: v.Complexity, base: v.base + nested, insideDecision: insideDecision}
 }
+
 
