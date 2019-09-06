@@ -237,14 +237,13 @@ func (v *complexityVisitor) Visit(n ast.Node) ast.Visitor {
 	case *ast.FuncDecl, *ast.RangeStmt, *ast.CaseClause, *ast.CommClause:
 		v.Complexity.Increase(v.base + 1)
 		nested++
-	case *ast.FuncType:
+	case *ast.FuncLit:
 		nested++
 	case *ast.BinaryExpr:
 		if v.insideDecision && (n.Op == token.LAND || n.Op == token.LOR) {
 			v.Complexity.Increase(v.base + 1)
 		}
 	}
-	// fmt.Printf("%v %d\n", n, v.base)
 	return &complexityVisitor{Complexity: v.Complexity, base: v.base + nested, insideDecision: insideDecision}
 }
 
