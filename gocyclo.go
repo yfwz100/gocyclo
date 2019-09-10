@@ -1,8 +1,9 @@
 // Copyright 2013 Frederik Zipp. All rights reserved.
+// Copyright 2019 Zhi.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Gocyclo calculates the cyclomatic complexities of functions and
+// Gocyclo calculates the cognitive complexities of functions and
 // methods in Go source code.
 //
 // Usage:
@@ -32,7 +33,7 @@ import (
 	"strings"
 )
 
-const usageDoc = `Calculate cyclomatic complexities of Go functions.
+const usageDoc = `Calculate cognitive complexities of Go functions.
 Usage:
         gocyclo [flags] <Go file or directory> ...
 
