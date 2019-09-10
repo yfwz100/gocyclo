@@ -241,7 +241,7 @@ func (v *complexityVisitor) Visit(n ast.Node) ast.Visitor {
 		nested++
 	case *ast.BinaryExpr:
 		if v.insideDecision && (n.Op == token.LAND || n.Op == token.LOR) {
-			v.Complexity.Increase(v.base + 1)
+			v.Complexity.Increase(1)
 		}
 	}
 	return &complexityVisitor{Complexity: v.Complexity, base: v.base + nested, insideDecision: insideDecision}
