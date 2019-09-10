@@ -234,7 +234,7 @@ func (v *complexityVisitor) Visit(n ast.Node) ast.Visitor {
 		insideDecision = true
 		v.Complexity.Increase(v.base + 1)
 		nested++
-	case *ast.FuncDecl, *ast.RangeStmt, *ast.CaseClause, *ast.CommClause:
+	case *ast.RangeStmt, *ast.SwitchStmt, *ast.CommClause:
 		v.Complexity.Increase(v.base + 1)
 		nested++
 	case *ast.FuncLit:
@@ -246,5 +246,6 @@ func (v *complexityVisitor) Visit(n ast.Node) ast.Visitor {
 	}
 	return &complexityVisitor{Complexity: v.Complexity, base: v.base + nested, insideDecision: insideDecision}
 }
+
 
 
