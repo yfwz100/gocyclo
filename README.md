@@ -1,6 +1,6 @@
 Gocyclo calculates cyclomatic complexities of functions in Go source code.
 
-The cyclomatic complexity of a function is calculated according to the
+The cognitive complexity of a function is calculated according to the
 following rules (like [Sonar][]):
 
      1 is the base complexity of a function
